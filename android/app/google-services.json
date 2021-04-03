@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "313904368054",
+    "project_id": "raseltime-2021",
+    "storage_bucket": "raseltime-2021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313904368054:android:40b88c1cd85538e3279917",
+        "android_client_info": {
+          "package_name": "com.moe.raseltime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313904368054-k4m9aioq7gb91dijp8hm86d8p3p4r333.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_K6hEJ6z1vecEHfzi0aBmv0HndX4yLj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313904368054-k4m9aioq7gb91dijp8hm86d8p3p4r333.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
