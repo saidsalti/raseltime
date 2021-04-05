@@ -60,8 +60,9 @@ class Authentication {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
+      
       );
-
+    
       user = userCredential.user;
       await user!.updateProfile(displayName: name);
       await user.reload();

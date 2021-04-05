@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rasel_time/helper/custom_colors.dart';
@@ -20,11 +21,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   late bool _isEmailVerified;
   late User _user;
 
+  final CollectionReference userprofile =
+      FirebaseFirestore.instance.collection("user_profile");
+
   bool _verificationEmailBeingSent = false;
   bool _isSigningOut = false;
 
   Route _routeToSignInScreen() {
-    print(_user.email);
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -60,215 +63,217 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         backgroundColor: CustomColors.firebaseNavy,
         title: AppBarTitle(),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            bottom: 20.0,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(),
-              ClipOval(
-                child: Material(
-                  color: CustomColors.firebaseGrey.withOpacity(0.3),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.person,
-                      size: 42,
-                      color: CustomColors.firebaseGrey,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              bottom: 20.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(),
+                ClipOval(
+                  child: Material(
+                    color: CustomColors.firebaseGrey.withOpacity(0.3),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.person,
+                        size: 42,
+                        color: CustomColors.firebaseGrey,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                'مرحبا',
-                style: TextStyle(
-                  color: CustomColors.firebaseGrey,
-                  fontSize: 26,
+                SizedBox(height: 16.0),
+                Text(
+                  'مرحبا',
+                  style: TextStyle(
+                    color: CustomColors.firebaseGrey,
+                    fontSize: 26,
+                  ),
                 ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                widget._user.displayName!,
-                style: TextStyle(
-                  color: CustomColors.firebaseYellow,
-                  fontSize: 26,
+                SizedBox(height: 8.0),
+                Text(
+                  widget._user.displayName!,
+                  style: TextStyle(
+                    color: CustomColors.firebaseYellow,
+                    fontSize: 26,
+                  ),
                 ),
-              ),
-              SizedBox(height: 24.0),
-              _isEmailVerified
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ClipOval(
-                          child: Material(
-                            color: Colors.greenAccent.withOpacity(0.6),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Icon(
-                                Icons.check,
-                                size: 20,
-                                color: Colors.white,
+                SizedBox(height: 24.0),
+                _isEmailVerified
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipOval(
+                            child: Material(
+                              color: Colors.greenAccent.withOpacity(0.6),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Icon(
+                                  Icons.check,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'البريد لم يتم تفعيله',
-                          style: TextStyle(
-                            color: Colors.greenAccent,
-                            fontSize: 20,
-                            letterSpacing: 0.5,
+                          SizedBox(width: 8.0),
+                          Text(
+                            'تم تأكيد البريد الإلكتروني',
+                            style: TextStyle(
+                              color: Colors.greenAccent,
+                              fontSize: 20,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ClipOval(
-                          child: Material(
-                            color: Colors.redAccent.withOpacity(0.8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Icon(
-                                Icons.close,
-                                size: 20,
-                                color: Colors.white,
+                        ],
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipOval(
+                            child: Material(
+                              color: Colors.redAccent.withOpacity(0.8),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'لم يتم التحقق من البريد الإلكتروني',
-                          style: TextStyle(
-                            color: Colors.redAccent,
-                            fontSize: 20,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-              SizedBox(height: 8.0),
-              Visibility(
-                visible: !_isEmailVerified,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _verificationEmailBeingSent
-                        ? CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              CustomColors.firebaseGrey,
+                          SizedBox(width: 8.0),
+                          Text(
+                            'لم يتم التحقق من البريد الإلكتروني',
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 20,
+                              letterSpacing: 0.5,
                             ),
-                          )
-                        : ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
+                          ),
+                        ],
+                      ),
+                SizedBox(height: 8.0),
+                Visibility(
+                  visible: !_isEmailVerified,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _verificationEmailBeingSent
+                          ? CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
                                 CustomColors.firebaseGrey,
                               ),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                            )
+                          : ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                  CustomColors.firebaseGrey,
+                                ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () async {
+                                setState(() {
+                                  _verificationEmailBeingSent = true;
+                                });
+                                await _user.sendEmailVerification();
+                                setState(() {
+                                  _verificationEmailBeingSent = false;
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                                child: Text(
+                                  'تحقق',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: CustomColors.firebaseNavy,
+                                    letterSpacing: 2,
+                                  ),
                                 ),
                               ),
                             ),
-                            onPressed: () async {
-                              setState(() {
-                                _verificationEmailBeingSent = true;
-                              });
-                              await _user.sendEmailVerification();
-                              setState(() {
-                                _verificationEmailBeingSent = false;
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                              child: Text(
-                                'تحقق',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: CustomColors.firebaseNavy,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                    SizedBox(width: 16.0),
-                    IconButton(
-                      icon: Icon(Icons.refresh),
-                      onPressed: () async {
-                        User? user = await Authentication.refreshUser(_user);
+                      SizedBox(width: 16.0),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () async {
+                          User? user = await Authentication.refreshUser(_user);
 
-                        if (user != null) {
-                          setState(() {
-                            _user = user;
-                            _isEmailVerified = user.emailVerified;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 24.0),
-              Text(
-                'أنت الآن مسجل الدخول باستخدام مصادقة Firebase. لتسجيل الخروج من حسابك ، انقر فوق الزر "تسجيل الخروج" أدناه',
-                style: TextStyle(
-                    color: CustomColors.firebaseGrey.withOpacity(0.8),
-                    fontSize: 14,
-                    letterSpacing: 0.2),
-              ),
-              SizedBox(height: 16.0),
-              _isSigningOut
-                  ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.redAccent,
+                          if (user != null) {
+                            setState(() {
+                              _user = user;
+                              _isEmailVerified = user.emailVerified;
+                            });
+                          }
+                        },
                       ),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
+                    ],
+                  ),
+                ),
+                SizedBox(height: 24.0),
+                Text(
+                  'أنت الآن مسجل الدخول باستخدام مصادقة Firebase. لتسجيل الخروج من حسابك ، انقر فوق الزر "تسجيل الخروج" أدناه',
+                  style: TextStyle(
+                      color: CustomColors.firebaseGrey.withOpacity(0.8),
+                      fontSize: 14,
+                      letterSpacing: 0.2),
+                ),
+                SizedBox(height: 16.0),
+                _isSigningOut
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
                           Colors.redAccent,
                         ),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                      )
+                    : ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            Colors.redAccent,
+                          ),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            _isSigningOut = true;
+                          });
+                          await FirebaseAuth.instance.signOut();
+                          setState(() {
+                            _isSigningOut = false;
+                          });
+                          Navigator.of(context)
+                              .pushReplacement(_routeToSignInScreen());
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: Text(
+                            'خروج',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 2,
+                            ),
                           ),
                         ),
                       ),
-                      onPressed: () async {
-                        setState(() {
-                          _isSigningOut = true;
-                        });
-                        await FirebaseAuth.instance.signOut();
-                        setState(() {
-                          _isSigningOut = false;
-                        });
-                        Navigator.of(context)
-                            .pushReplacement(_routeToSignInScreen());
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Text(
-                          'خروج',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

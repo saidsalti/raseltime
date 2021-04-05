@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rasel_time/helper/custom_colors.dart';
+import 'package:rasel_time/pages/rasel_home_page.dart';
 import 'package:rasel_time/pages/user_info_screen.dart';
+import 'package:rasel_time/pages/user_profile_page.dart';
 import 'package:rasel_time/widgets/sign_in_form.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -22,9 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => UserInfoScreen(
-            user: user,
-          ),
+          builder: (context) => RaselHomePage(),
         ),
       );
     }
